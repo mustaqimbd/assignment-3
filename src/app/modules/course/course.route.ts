@@ -1,8 +1,13 @@
 import express from 'express';
+import { courseControllers } from './course.controller';
+import requestValidator from '../../middlewares/requestValidator';
+import { courseDataValidationSchema } from './course.validation';
 const courseRoutes = express.Router()
 
-courseRoutes.get('/', (req, res) => {
-    res.send('Hello world')
-})
+courseRoutes.post(
+    '/',
+    requestValidator(courseDataValidationSchema),
+    courseControllers.createCourse
+)
 
 export default courseRoutes
