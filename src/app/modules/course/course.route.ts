@@ -9,5 +9,9 @@ courseRoutes.post(
     requestValidator(courseDataValidationSchema),
     courseControllers.createCourse
 )
+courseRoutes.get(
+    '/',
+    courseControllers.getCourses
+)
 
 export default courseRoutes

@@ -10,6 +10,10 @@ const routes = [
         route: courseRoutes
     },
     {
+        path: '/courses',
+        route: courseRoutes
+    },
+    {
         path: '/categories',
         route: categoryRoutes
     }

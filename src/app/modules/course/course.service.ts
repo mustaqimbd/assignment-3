@@ -1,3 +1,4 @@
+import queryHelper from "../queryHelper/queryHelper";
 import { TCourse } from "./course.interface"
 import { CourseModel } from "./course.model"
 
@@ -12,7 +13,24 @@ const createCourseIntoDB = async (payload: TCourse) => {
     const result = await CourseModel.create(payload)
     return result
 }
+const getCoursesFromDB = async (queryParameter: Record<string, unknown>) => {
+
+    const { query, sortOptions, currentPage, currentLimit } = queryHelper(queryParameter)
+
+    console.log('query=', query, 'sortoption=', sortOptions)
+    
+    const data = await CourseModel.find(query)
+        .skip((currentPage - 1) * currentLimit)
+        .limit(currentLimit)
+        .sort(sortOptions)
+        .exec();
+
+    const total = await CourseModel.countDocuments()
+    const meta = { page: currentPage, limit: currentLimit, total }
+
+    return { meta, data }
+}
 
 export const courseServices = {
-    createCourseIntoDB
+    createCourseIntoDB, getCoursesFromDB
 }
