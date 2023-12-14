@@ -6,7 +6,7 @@ const courseRoutes = express.Router()
 
 courseRoutes.post(
     '/',
-    // requestValidator(courseDataValidationSchema),
+    requestValidator(courseDataValidationSchema),
     courseControllers.createCourse
 )
 
@@ -15,10 +15,17 @@ courseRoutes.get(
     courseControllers.getCourses
 )
 
+courseRoutes.get(
+    '/:courseId/reviews',
+    courseControllers.getCourseWithReview
+)
+
+
 courseRoutes.put(
     '/:courseId',
     requestValidator(updateCourseDataValidationSchema),
     courseControllers.updateCourse
 )
+
 
 export default courseRoutes

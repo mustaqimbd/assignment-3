@@ -4,6 +4,7 @@ import { TCourse } from "./course.interface"
 import { CourseModel } from "./course.model"
 import { NextFunction } from "express";
 import sendError from "../../errorHandlers/sendError";
+import ReviewModel from "../review/review.model";
 
 const createCourseIntoDB = async (payload: TCourse) => {
 
@@ -73,7 +74,7 @@ const updateCourseIntoDB = async (id: string, payload: Partial<TCourse>, next: N
             const addedNewTags = tags?.filter(
                 (tag) => tag.name && !tag.isDeleted,
             );
-            
+
             const addCourseTags = await CourseModel.findByIdAndUpdate(
                 id,
                 {
@@ -92,7 +93,7 @@ const updateCourseIntoDB = async (id: string, payload: Partial<TCourse>, next: N
             const deletedTags = tags
                 .filter((tag) => tag.name && tag.isDeleted)
                 .map((tag) => tag.name);
-            
+
             const deletedCourseTags = await CourseModel.findByIdAndUpdate(
                 id,
                 {
@@ -122,6 +123,14 @@ const updateCourseIntoDB = async (id: string, payload: Partial<TCourse>, next: N
     }
 }
 
+const getCourseWithReviewFromDB = async (id: string) => {
+
+    const result1 = await CourseModel.findById(id)
+    const result2 = await ReviewModel.find({ courseId: id })
+
+    return { course: result1, reviews: result2 }
+}
+
 export const courseServices = {
-    createCourseIntoDB, getCoursesFromDB, updateCourseIntoDB
+    createCourseIntoDB, getCoursesFromDB, updateCourseIntoDB, getCourseWithReviewFromDB, 
 }
