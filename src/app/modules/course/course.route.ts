@@ -1,17 +1,24 @@
 import express from 'express';
 import { courseControllers } from './course.controller';
 import requestValidator from '../../middlewares/requestValidator';
-import { courseDataValidationSchema } from './course.validation';
+import { courseDataValidationSchema, updateCourseDataValidationSchema } from './course.validation';
 const courseRoutes = express.Router()
 
 courseRoutes.post(
     '/',
-    requestValidator(courseDataValidationSchema),
+    // requestValidator(courseDataValidationSchema),
     courseControllers.createCourse
 )
+
 courseRoutes.get(
     '/',
     courseControllers.getCourses
+)
+
+courseRoutes.put(
+    '/:courseId',
+    requestValidator(updateCourseDataValidationSchema),
+    courseControllers.updateCourse
 )
 
 export default courseRoutes

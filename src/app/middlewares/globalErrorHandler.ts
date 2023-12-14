@@ -5,6 +5,7 @@ import handleMongooseDuplicateError from "../errorHandlers/handleMongooseDuplica
 import handleMongooseCastError from "../errorHandlers/handleMongooseCastError";
 import handleMongooseValidationError from "../errorHandlers/handleMongooseValidationError";
 import mongoose from "mongoose";
+import sendError from "../errorHandlers/sendError";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
@@ -21,20 +22,16 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
     }
     else if (err?.name === "ValidationError") {
         errorDetails = (Object.values((err as mongoose.Error.ValidationError).errors)[0]);
-
-        if (errorDetails?.name === "ValidatorError") {
-            const formattedError = handleMongooseValidationError(errorDetails)
-            statusCode = formattedError.statusCode
-            message = formattedError.message
-            errorMessage = formattedError.errorMessage
-        }
-        else if (errorDetails?.name === "CastError") {
-            const formattedError = handleMongooseCastError(errorDetails)
-            statusCode = formattedError.statusCode
-            message = formattedError.message
-            errorMessage = formattedError.errorMessage
-        }
-
+        const formattedError = handleMongooseValidationError(errorDetails)
+        statusCode = formattedError.statusCode
+        message = formattedError.message
+        errorMessage = formattedError.errorMessage
+    }
+    else if (err?.name === "CastError") {
+        const formattedError = handleMongooseCastError(err)
+        statusCode = formattedError.statusCode
+        message = formattedError.message
+        errorMessage = formattedError.errorMessage
     }
     else if (err?.code === 11000) {
         const formattedError = handleMongooseDuplicateError(err)
@@ -42,8 +39,11 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
         message = formattedError.message
         errorMessage = formattedError.errorMessage
     }
-
-
+    else if (err instanceof sendError) {
+        statusCode = err.statusCode
+        message = err.message
+        errorMessage = err.message
+    }
     res.status(statusCode).json({
         success: false,
         message,

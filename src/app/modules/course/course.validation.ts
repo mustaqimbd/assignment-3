@@ -24,3 +24,27 @@ export const courseDataValidationSchema = z.object({
     details: details
 })
 
+
+const updateTags = z.object({
+    name: z.string().min(1).optional(),
+    isDeleted: z.boolean().optional()
+});
+
+const updateDetails = z.object({
+    level: z.string().min(1).optional(),
+    description: z.string().min(1).optional()
+});
+
+export const updateCourseDataValidationSchema = z.object({
+    title: z.string().min(1).optional(),
+    instructor: z.string().min(1).optional(),
+    categoryId: z.string().min(1).optional(),
+    price: z.number().min(1).optional(),
+    tags: z.array(updateTags).min(1).optional(),
+    startDate: z.string().min(1).optional(),
+    endDate: z.string().min(1).optional(),
+    language: z.string().min(1).optional(),
+    provider: z.string().min(1).optional(),
+    details: updateDetails.optional()
+});
+
