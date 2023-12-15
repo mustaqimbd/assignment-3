@@ -34,16 +34,25 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
     }
     else if (err?.name === "ValidationError") {
         errorDetails = (Object.values((err as mongoose.Error.ValidationError).errors)[0]);
-        const formattedError = handleMongooseValidationError(errorDetails)
-        statusCode = formattedError.statusCode
-        message = formattedError.message
-        errorMessage = formattedError.errorMessage
+        if (errorDetails?.name === "ValidatorError") {
+            const formattedError = handleMongooseValidationError(errorDetails)
+            statusCode = formattedError.statusCode
+            message = formattedError.message
+            errorMessage = formattedError.errorMessage
+        }
+        else if (errorDetails?.name === "CastError") {
+            const formattedError = handleMongooseCastError(errorDetails)
+            statusCode = formattedError.statusCode
+            message = formattedError.message
+            errorMessage = formattedError.errorMessage
+        }
     }
     else if (err instanceof sendError) {
         statusCode = err.statusCode
         message = err.message
         errorMessage = err.message
     }
+
     res.status(statusCode).json({
         success: false,
         message,

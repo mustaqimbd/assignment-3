@@ -19,11 +19,10 @@ const getCourses = catchAsync(async (req, res) => {
     })
 })
 
-const updateCourse = catchAsync(async (req, res, next) => {
+const updateCourse = catchAsync(async (req, res) => {
     const id = req.params.courseId
-    const result = await courseServices.updateCourseIntoDB(id, req.body, next)
+    const result = await courseServices.updateCourseIntoDB(id, req.body)
     sendResponse(res, {
-        statusCode: 200,
         message: "Course updated successfully",
         data: result
     })
@@ -39,7 +38,7 @@ const getCourseWithReview = catchAsync(async (req, res) => {
 })
 
 const getBestCourse = catchAsync(async (req, res) => {
-   
+
     const result = await courseServices.getBestCourseFromDB()
     sendResponse(res, {
         message: "Best course retrieved successfully",
@@ -48,5 +47,5 @@ const getBestCourse = catchAsync(async (req, res) => {
 })
 
 export const courseControllers = {
-    createCourse, getCourses, updateCourse, getCourseWithReview,getBestCourse
+    createCourse, getCourses, updateCourse, getCourseWithReview, getBestCourse
 }

@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 import queryHelper from "../queryHelper/queryHelper";
 import { TCourse } from "./course.interface"
 import { CourseModel } from "./course.model"
-import { NextFunction } from "express";
 import sendError from "../../errorHandlers/sendError";
 import ReviewModel from "../review/review.model";
 
@@ -34,7 +33,7 @@ const getCoursesFromDB = async (queryParameter: Record<string, unknown>) => {
     return { meta, data }
 }
 
-const updateCourseIntoDB = async (id: string, payload: Partial<TCourse>, next: NextFunction) => {
+const updateCourseIntoDB = async (id: string, payload: Partial<TCourse>) => {
     const { tags, details, ...remainingData } = payload
     const session = await mongoose.startSession()
     try {
@@ -118,7 +117,7 @@ const updateCourseIntoDB = async (id: string, payload: Partial<TCourse>, next: N
     } catch (error) {
         await session.abortTransaction()
         await session.endSession()
-        next(error)
+        throw new sendError(400, 'Failed to update course');
     }
 }
 
