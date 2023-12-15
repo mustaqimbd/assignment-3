@@ -21,15 +21,14 @@ const getCoursesFromDB = async (queryParameter: Record<string, unknown>) => {
 
     const { query, sortOptions, currentPage, currentLimit } = queryHelper(queryParameter)
 
-    console.log('query=', query, 'sortoption=', sortOptions)
-
     const data = await CourseModel.find(query)
         .skip((currentPage - 1) * currentLimit)
         .limit(currentLimit)
         .sort(sortOptions)
         .exec();
 
-    const total = await CourseModel.countDocuments()
+    const total = await CourseModel.countDocuments(query)
+
     const meta = { page: currentPage, limit: currentLimit, total }
 
     return { meta, data }
@@ -130,7 +129,34 @@ const getCourseWithReviewFromDB = async (id: string) => {
 
     return { course: result1, reviews: result2 }
 }
+const getBestCourseFromDB = async () => {
+    const pipeline = [
+        {
+            $group: {
+                _id: "$courseId",
+                averageRating: { $avg: "$rating" },
+                reviewCount: { $sum: 1 }
+            }
+        },
+    ];
 
+    const result1 = await ReviewModel.aggregate(pipeline)
+    result1.sort((a, b) => {
+        const ratingComparison = b.averageRating - a.averageRating;
+        return ratingComparison !== 0 ? ratingComparison : b.reviewCount - a.reviewCount;
+    });
+
+    if (result1.length > 0) {
+        const result2 = await CourseModel.findById({ _id: result1[0]._id })
+            .select('-createdAt -updatedAt -__v')
+            .lean();
+
+        return { course: { ...result2, ...result1[0] } }
+    } else {
+        return null
+    }
+
+}
 export const courseServices = {
-    createCourseIntoDB, getCoursesFromDB, updateCourseIntoDB, getCourseWithReviewFromDB, 
+    createCourseIntoDB, getCoursesFromDB, updateCourseIntoDB, getCourseWithReviewFromDB, getBestCourseFromDB
 }
