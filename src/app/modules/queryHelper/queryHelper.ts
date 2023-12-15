@@ -12,7 +12,7 @@ const queryHelper = (queryParameter: Record<string, unknown>) => {
     }
 
     if (tags) {
-        query["tags.name"] = tags;
+        query["tags.name"] = { $regex: new RegExp(tags as string, 'i') };
     }
 
     if (startDate && endDate) {
@@ -21,11 +21,11 @@ const queryHelper = (queryParameter: Record<string, unknown>) => {
     }
 
     if (language) {
-        query.language = language;
+        query.language = { $regex: new RegExp(language as string, 'i') };
     }
 
     if (provider) {
-        query.provider = provider;
+        query.provider = { $regex: new RegExp(provider as string, 'i') };
     }
 
     if (durationInWeeks) {
@@ -33,7 +33,7 @@ const queryHelper = (queryParameter: Record<string, unknown>) => {
     }
 
     if (level) {
-        query['details.level'] = level;
+        query['details.level'] = { $regex: new RegExp(level as string, 'i') };
     }
 
     let sortOptions: string = 'createdAt'

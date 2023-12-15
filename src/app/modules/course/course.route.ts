@@ -19,7 +19,10 @@ courseRoutes.get(
     '/:courseId/reviews',
     courseControllers.getCourseWithReview
 )
-
+courseRoutes.get(
+    '/best',
+    courseControllers.getBestCourse
+)
 
 courseRoutes.put(
     '/:courseId',

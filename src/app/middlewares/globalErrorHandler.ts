@@ -20,13 +20,6 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
         message = formattedError.message
         errorMessage = formattedError.errorMessage
     }
-    else if (err?.name === "ValidationError") {
-        errorDetails = (Object.values((err as mongoose.Error.ValidationError).errors)[0]);
-        const formattedError = handleMongooseValidationError(errorDetails)
-        statusCode = formattedError.statusCode
-        message = formattedError.message
-        errorMessage = formattedError.errorMessage
-    }
     else if (err?.name === "CastError") {
         const formattedError = handleMongooseCastError(err)
         statusCode = formattedError.statusCode
@@ -35,6 +28,13 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
     }
     else if (err?.code === 11000) {
         const formattedError = handleMongooseDuplicateError(err)
+        statusCode = formattedError.statusCode
+        message = formattedError.message
+        errorMessage = formattedError.errorMessage
+    }
+    else if (err?.name === "ValidationError") {
+        errorDetails = (Object.values((err as mongoose.Error.ValidationError).errors)[0]);
+        const formattedError = handleMongooseValidationError(errorDetails)
         statusCode = formattedError.statusCode
         message = formattedError.message
         errorMessage = formattedError.errorMessage
