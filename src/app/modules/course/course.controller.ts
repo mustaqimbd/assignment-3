@@ -38,8 +38,15 @@ const getCourseWithReview = catchAsync(async (req, res) => {
     })
 })
 
-
+const getBestCourse = catchAsync(async (req, res) => {
+   
+    const result = await courseServices.getBestCourseFromDB()
+    sendResponse(res, {
+        message: "Best course retrieved successfully",
+        data: result
+    })
+})
 
 export const courseControllers = {
-    createCourse, getCourses, updateCourse, getCourseWithReview,
+    createCourse, getCourses, updateCourse, getCourseWithReview,getBestCourse
 }
